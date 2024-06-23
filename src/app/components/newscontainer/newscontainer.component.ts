@@ -1,9 +1,18 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { NewscardComponent } from './newscard/newscard.component';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { InfiniteScrollDirective, InfiniteScrollModule } from 'ngx-infinite-scroll';
+import {
+  InfiniteScrollDirective,
+  InfiniteScrollModule,
+} from 'ngx-infinite-scroll';
 
 export type newsType = {
   source: {
@@ -13,7 +22,7 @@ export type newsType = {
   title: string;
   description: string;
   url: string;
-  author:string | null;
+  author: string | null;
   urlToImage: string | null;
   publishedAt: string;
   content: string | null;
@@ -24,24 +33,23 @@ export type newsType = {
   standalone: true,
   templateUrl: './newscontainer.component.html',
   styleUrl: './newscontainer.component.css',
-  imports: [NewscardComponent, CommonModule,InfiniteScrollDirective],
+  imports: [NewscardComponent, CommonModule, InfiniteScrollDirective],
 })
-export class NewscontainerComponent implements OnInit,OnChanges {
+export class NewscontainerComponent implements OnInit, OnChanges {
   constructor(private http: HttpClient) {}
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['category']){
-      this.page = 1
-      this.articles = []
-      this.getNews(changes['category'].currentValue)
+    if (changes['category']) {
+      this.page = 1;
+      this.articles = [];
+      this.getNews(changes['category'].currentValue);
     }
-    
-    
+
     // if(changes['category'].currentValue){
-  //     // this.getNews(changes['category'].currentValue)
-  //     this.page = 1
-      
+    //     // this.getNews(changes['category'].currentValue)
+    //     this.page = 1
+
     // }
-    console.debug("Value Changed",changes)
+    console.debug('Value Changed', changes);
   }
 
   @Input() bgMode = '';
@@ -49,10 +57,10 @@ export class NewscontainerComponent implements OnInit,OnChanges {
 
   pageSize = 8;
   page = 1;
-  isError=false;
-  errorMessage="";
+  isError = false;
+  errorMessage = '';
   isLoading = false;
-  totalArticles = 1 ;
+  totalArticles = 1;
 
   API_KEy: string = '0eacd250d5f94316a9b4dbeb2ace698c';
 
@@ -188,32 +196,37 @@ export class NewscontainerComponent implements OnInit,OnChanges {
   //     content: "Breanna Stewart and the New York Liberty are off to the best start in franchise history.\r\nIn a battle between the top two teams in the WNBA, the Liberty defeated the Las Vegas Aces, 99-61, on Saturda… [+1723 chars]"
   //   }
   // ];
-  
-  articles:newsType[] = []
-  
 
+  articles: newsType[] = [];
 
-  getNews(category:string){
+  getNews(category: string) {
     this.isLoading = true;
-    const res = this.http.get(`https://newsapi.org/v2/top-headlines?apiKey=${this.API_KEy}&country=in&category=${category}&page=${this.page}&pageSize=${this.pageSize}`).subscribe((data:any)=>{
-      if(data.status == "ok"){
-        this.articles.push(...data.articles)
-        this.totalArticles = data.totalResults
-      }else{
-        this.isError = true;
-        this.errorMessage = data.message || "Internal Server Error."
-      }
-      console.debug("response",data)
-    })
-    this.isLoading = false
-    this.page += 1
+    const res = this.http
+      .get(
+        `https://newsapi.org/v2/top-headlines?apiKwey=${this.API_KEy}&country=in&category=${category}&page=${this.page}&pageSize=${this.pageSize}`
+      )
+      .subscribe(
+        (data: any) => {
+          if (data.status == 'ok') {
+            this.articles.push(...data.articles);
+            this.totalArticles = data.totalResults;
+          }
+          console.debug('response', data);
+        },
+        (error) => {
+          this.isError = true;
+          this.errorMessage = error?.error?.message || "Internal Server Error"
+          console.debug(error)
+          this.isLoading = false
+        }
+      );
+    this.isLoading = false;
+    this.page += 1;
   }
 
   ngOnInit(): void {
-    this.getNews("general")
+    this.getNews('general');
   }
 
-  scrollDown(){
-    console.debug("Scroll Donw")
-  }
+  
 }

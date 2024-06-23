@@ -1,0 +1,26 @@
+<div class="container mt-4 pb-5 pt-2">
+    <div *ngIf="isError" class="alert alert-warning alert-dismissible fade show" role="alert">
+       {{errorMessage}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <h4 class="text-center" [ngClass]="bgMode == 'light' ? 'text-dark' : '
+    text-light'">Newsapp - {{category.charAt(0).toUpperCase() + category.substring(1)}} Headlines</h4>
+
+    <div class="row  justify-content-center align-items-center mt-4  ">
+        <div class="col-md-6 my-3" *ngFor="let item of articles;let index=index;">
+            <app-newscard [news]="item" [bgMode]="bgMode"></app-newscard>
+
+        </div>
+
+
+
+        <div *ngIf="articles.length != totalArticles" infinite-scroll [infiniteScrollDistance]="1" [infiniteScrollThrottle]="500" (scrolled)="getNews(category)" class="mt-4">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
